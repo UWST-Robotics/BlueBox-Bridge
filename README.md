@@ -4,8 +4,11 @@
 
 
 Helpful functions
+
     sudo netstat -lptu
+    
     sudo systemctl status ser2net
+    
     sudo systemctl restart ser2net
 
 
