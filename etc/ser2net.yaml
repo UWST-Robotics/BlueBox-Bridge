@@ -1,11 +1,15 @@
 %YAML 1.1
 ---
-#Basic setup
-#Change ip as well as usb path
-connection: &vexbrn
-    accepter: telnet,tcp, 192.168.158.28, 8111
-    enable: on
-    options:
-      kickolduser: true
-    connector: serialdev, /dev/serial/by-id/usb-VEX_Robotics__Inc_VEX_Robotics_V5_Brain_-_9FC19E00-if02, local
+
+connection: &serialcon0
+  accepter: telnet,tcp, 192.168.0.1, 8100
+  enable: on
+  options:
+  connector: serialdev, /dev/serial/by-id/vex2, local
+
+connection: &serialcon1
+  accepter: telnet,tcp, 192.168.0.1, 8101
+  enable: on
+  options:
+  connector: serialdev, /dev/serial/by-id/vex0, local
 
