@@ -25,33 +25,52 @@ Chose "Raspberry Pi OS LITE (64 bit)" as Operating System
 
 Chose Correct storage device
 
+Click and edit OS customisation
 
+change hostname to "bluebox"
 
+change username to "bluebox"
+
+change password to "bluebox" or something more secure (write it down)
+
+configure wireless settings to a network with internet connection
+
+enable ssh
+
+click save and apply
+
+install Operating system
 
 ## Install Services ( AS SUDO )
 
-get services
+turn on pi with micro sd card installed (make sure pi can connect to configured wifi connection, first boot can take a while)
 
-    apt install git -y
+
+
+connect laptop to network
+
+open putty
+
+open an ssh connection to hostname "bluebox"
+
+Accept new key
+
+login as configured username and password
+
+run the following commands to install required packages
+
+    sudo apt install git -y
 
     cd /home/bluebox
 
     git clone https://github.com/UWST-Robotics/BlueBox-Bridge.git
 
-    chmod +x install.sh
+    chmod +x sh/install.sh
 
-    ./install.sh
-        apt update
-        apt upgrade -y
-        apt-get install pip -y
-        apt install python3-fastapi -y
-        apt install ser2net -y
-        apt install hostapd
-        apt install dnsmasq
-        DEBIAN_FRONTEND=noninteractive apt install -y netfilter-persistent iptables-persistent
+    sudo ./install.sh
 
 
-## Configure Hosted Wifi - (https://www.stevemurch.com/setting-up-a-raspberry-pi-for-ad-hoc-networking-tech-note/2022/12)
+### Configure Hosted Wifi - (https://www.stevemurch.com/setting-up-a-raspberry-pi-for-ad-hoc-networking-tech-note/2022/12)
 
     systemctl unmask hostapd
 

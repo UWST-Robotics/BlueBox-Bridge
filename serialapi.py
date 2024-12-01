@@ -16,7 +16,7 @@ PORTS = [] # [ portNum, usbPath ]
 # Helper Functions
 def getSerialConfig(id: int, path: str) -> str: # Tested Working
     # Returns config for serial device to telnet
-    res = "connection: &serialcon"+ str(id) +"\n  accepter: telnet,tcp, "+str(IP)+", "+str(PORT + id)+"\n  enable: on\n  connector: serialdev, "+path+", loc>
+    res = "connection: &serialcon"+ str(id) +"\n  accepter: telnet,tcp, "+str(IP)+", "+str(PORT + id)+"\n  enable: on\n  connector: serialdev, "+path+", local\n\n"
     print(res)
     return res
 
@@ -30,15 +30,10 @@ def getSerialDevices() -> list[str]: #TESTED WORKING
     # Get list of serial devices in folder /dev/serial
     serialPath = "/dev/serial/by-id/"
     onlyfiles = os.listdir(serialPath)
-    #onlyfiles = [f for f in listdir(serialPath) if isfile(join(serialPath, f))] # https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a->
-    #return onlyfiles
-    #print("onlyfiles :  " + str(onlyfiles))
     ret = []
     for x in onlyfiles:
         ret.append(serialPath + x)
     return ret
-
-
 
 # Main Functions
 @app.get("/")
@@ -79,15 +74,12 @@ def read_item(portNum: int):
             return {"port": x[1]}
     return {"status": "not found"}
 
-#@app.get("/ports/by-usb-path/{usbPath}") # Tested Working
+#@app.get("/ports/by-usb-path/{usbPath}") # PORTS[] has "/" which screws up the https parsing, needs a bit of refactoring work, idk if I care enough
 #def read_item(usbPath: str):
 #    for x in PORTS:
 #        if(x[1] == usbPath):
 #            return {"port": x[0]}
 #    return {"status": "not found"}
-
-
-
 
 # Test functions
 @app.get("/tests/getSerialConfig/{id}/{path}")
