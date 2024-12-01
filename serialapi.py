@@ -35,6 +35,13 @@ def getSerialDevices() -> list[str]: #TESTED WORKING
         ret.append(serialPath + x)
     return ret
 
+# System Functions
+def systemWifiMode() -> str: # Tested Working
+    #run linux command to reset ser2net.service
+    command = "systemctl restart ser2net"
+    os.system(command)
+    return "success"
+
 # Main Functions
 @app.get("/")
 def ping() :# Tested Working
