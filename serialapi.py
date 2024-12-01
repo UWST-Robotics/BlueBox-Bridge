@@ -6,7 +6,7 @@ from os.path import isfile, join
 
 app = FastAPI()
 
-IP = "192.168.0.1"
+IP = "192.168.1.1"
 PORT = 8100
 
 YAMLHEADER = "%YAML 1.1\n---\n\n"
@@ -16,22 +16,27 @@ PORTS = [] # [ portNum, usbPath ]
 # Helper Functions
 def getSerialConfig(id: int, path: str) -> str: # Tested Working
     # Returns config for serial device to telnet
-    res = "connection: &serialcon"+ str(id) +"\n  accepter: telnet,tcp, "+str(IP)+", "+str(PORT + id)+"\n  enable: on\n  options:\n  connector: serialdev, "+path+", local\n\n"
+    res = "connection: &serialcon"+ str(id) +"\n  accepter: telnet,tcp, "+str(IP)+", "+str(PORT + id)+"\n  enable: on\n  connector: serialdev, "+path+", loc>
     print(res)
     return res
-def resetSer2NetService() -> str: # TODO TEST
+
+def resetSer2NetService() -> str: # TESTED WORKING
     #run linux command to reset ser2net.service
-    command = "systemctl restart ser2net"     
+    command = "systemctl restart ser2net"
     os.system(command)
     return "success"
 
-def getSerialDevices() -> list[str]: #TODO TEST
+def getSerialDevices() -> list[str]: #TESTED WORKING
     # Get list of serial devices in folder /dev/serial
     serialPath = "/dev/serial/by-id/"
-
-    onlyfiles = [f for f in listdir(serialPath) if isfile(join(serialPath, f))] # https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a-directory
+    onlyfiles = os.listdir(serialPath)
+    #onlyfiles = [f for f in listdir(serialPath) if isfile(join(serialPath, f))] # https://stackoverflow.com/questions/3207219/how-do-i-list-all-files-of-a->
     #return onlyfiles
-    return ["/dev/serial/by-id/vex2","/dev/serial/by-id/vex0"]
+    #print("onlyfiles :  " + str(onlyfiles))
+    ret = []
+    for x in onlyfiles:
+        ret.append(serialPath + x)
+    return ret
 
 
 
@@ -51,18 +56,19 @@ def setPorts():
     devs = getSerialDevices()
 
     # new yaml config
-    f = open("etc/ser2net.yaml", "w") # w will overwrite the existing file
+    f = open("/etc/ser2net.yaml", "w") # w will overwrite the existing file
     f.write(YAMLHEADER) # set YAMLHEADER
-    
+
     for x in range(0, len(devs)): # Tetsed Working
         f.write(getSerialConfig(x,devs[x]))
         PORTS.append( [PORT + x, devs[x]])
     f.close()
 
+    print("configured ser2net config")
+
     resetSer2NetService()
 
     return {"status": "success"}
-
 
 
 # Extra Get Commands
@@ -73,12 +79,12 @@ def read_item(portNum: int):
             return {"port": x[1]}
     return {"status": "not found"}
 
-@app.get("/ports/by-usb-path/{usbPath}") # Tested Working
-def read_item(usbPath: str):
-    for x in PORTS:
-        if(x[1] == usbPath):
-            return {"port": x[0]}
-    return {"status": "not found"}
+#@app.get("/ports/by-usb-path/{usbPath}") # Tested Working
+#def read_item(usbPath: str):
+#    for x in PORTS:
+#        if(x[1] == usbPath):
+#            return {"port": x[0]}
+#    return {"status": "not found"}
 
 
 
